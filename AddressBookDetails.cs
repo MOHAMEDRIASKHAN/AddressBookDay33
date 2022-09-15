@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace AddressBookDay33
+{
+    public class AddressBookDetails
+    {
+        public static string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PayrollService;Integrated Security=True";
+        SqlConnection conn = new SqlConnection(connectionString);
+        public void getData()
+        {
+            try
+            {
+                Details emp = new Details();
+                using (this.conn)
+                {
+                    string query = @"select * from addressBook";
+                    SqlCommand cmd = new SqlCommand(query, this.conn);
+                    this.conn.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            emp.id = dr.GetInt32(0);
+                            emp.name = dr.GetString(1);
+                            emp.contact = dr.GetInt32(2);
+                            emp.city = dr.GetString(3);
+                            emp.gender = dr.GetString(4);
+                            Console.WriteLine("{0},{1},{2},{3},{4}", emp.id, emp.name, emp.contact, emp.city, emp.gender);
+                            Console.WriteLine("\n");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No data found");
+                    }
+                    dr.Close();
+                    this.conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+    }
+}
